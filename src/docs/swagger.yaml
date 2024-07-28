@@ -3,8 +3,32 @@ definitions:
   gin.H:
     additionalProperties: {}
     type: object
+  main.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
   models.Credentials:
     properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
       password:
         type: string
       username:
@@ -16,14 +40,9 @@ externalDocs:
 host: localhost:8080
 info:
   contact:
-    email: support@swagger.io
     name: im-mk
-    url: http://www.swagger.io/support
+    url: http://github.com/im-mk
   description: service to manager users
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
   title: user-service
   version: "1.0"
 paths:
@@ -57,6 +76,36 @@ paths:
       summary: Logs in a user
       tags:
       - auth
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the input payload
+      parameters:
+      - description: Create User Request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/main.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Create a new user
+      tags:
+      - users
 securityDefinitions:
   BasicAuth:
     type: basic

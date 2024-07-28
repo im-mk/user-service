@@ -1,2 +1,2 @@
 run:
-	cd src && swag init --parseDependency --parseInternal && go run main.go
+	cd src && swag init --parseDependency --parseInternal && go run .
