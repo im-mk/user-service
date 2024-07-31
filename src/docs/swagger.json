@@ -32,7 +32,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Credentials"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
@@ -78,7 +78,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.CreateUserRequest"
+                            "$ref": "#/definitions/models.CreateUserRequest"
                         }
                     }
                 ],
@@ -110,7 +110,7 @@
             "type": "object",
             "additionalProperties": {}
         },
-        "main.CreateUserRequest": {
+        "models.CreateUserRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -129,7 +129,7 @@
                 }
             }
         },
-        "models.Credentials": {
+        "models.LoginRequest": {
             "type": "object",
             "properties": {
                 "password": {
@@ -159,12 +159,10 @@
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
-    },
-    "externalDocs": {
-        "description": "OpenAPI",
-        "url": "https://swagger.io/resources/open-api/"
     }
 }

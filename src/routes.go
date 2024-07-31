@@ -11,6 +11,11 @@ func registerRoutes() {
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/login", loginHandler)
-	router.POST("/users", createUserHandler)
+
+	auth := router.Group("/")
+	auth.Use(authMiddleware())
+	{
+		auth.POST("/users", createUserHandler)
+	}
 	router.Run(":8080")
 }

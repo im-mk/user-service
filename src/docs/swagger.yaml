@@ -3,7 +3,7 @@ definitions:
   gin.H:
     additionalProperties: {}
     type: object
-  main.CreateUserRequest:
+  models.CreateUserRequest:
     properties:
       email:
         type: string
@@ -16,7 +16,7 @@ definitions:
     - password
     - username
     type: object
-  models.Credentials:
+  models.LoginRequest:
     properties:
       password:
         type: string
@@ -34,9 +34,6 @@ definitions:
       username:
         type: string
     type: object
-externalDocs:
-  description: OpenAPI
-  url: https://swagger.io/resources/open-api/
 host: localhost:8080
 info:
   contact:
@@ -57,7 +54,7 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/models.Credentials'
+          $ref: '#/definitions/models.LoginRequest'
       produces:
       - application/json
       responses:
@@ -87,7 +84,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/main.CreateUserRequest'
+          $ref: '#/definitions/models.CreateUserRequest'
       produces:
       - application/json
       responses:
@@ -107,6 +104,8 @@ paths:
       tags:
       - users
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

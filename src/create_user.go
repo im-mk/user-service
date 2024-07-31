@@ -4,15 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/im-mk/user-service/src/models"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
-
-type CreateUserRequest struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -24,13 +19,13 @@ func hashPassword(password string) (string, error) {
 // @Tags users
 // @Accept  json
 // @Produce  json
-// @Param user body CreateUserRequest true "Create User Request"
+// @Param user body models.CreateUserRequest true "Create User Request"
 // @Success 200 {object} models.User
 // @Failure 400 {object} gin.H
 // @Failure 500 {object} gin.H
 // @Router /users [post]
 func createUserHandler(c *gin.Context) {
-	var req CreateUserRequest
+	var req models.CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -43,10 +38,7 @@ func createUserHandler(c *gin.Context) {
 	}
 
 	// Check if the username or email already exists
-	var exists bool
-	err = db.QueryRow(`SELECT EXISTS (
-        SELECT 1 FROM users WHERE username = $1 OR email = $2
-    )`, req.Username, req.Email).Scan(&exists)
+	exists, err := userRepo.UserExists(req.Username, req.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check for existing user"})
 		return
@@ -57,8 +49,7 @@ func createUserHandler(c *gin.Context) {
 	}
 
 	// Insert the new user
-	_, err = db.Exec(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
-		req.Username, req.Email, hashedPassword)
+	err = userRepo.CreateUser(req.Username, req.Email, hashedPassword)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return

@@ -7,8 +7,6 @@ import (
 	_ "github.com/im-mk/user-service/src/docs"
 )
 
-var db *sql.DB
-
 func initDB() {
 	var err error
 	dsn := "host=localhost user=postgres password=postgres dbname=user-service port=5432 sslmode=disable"

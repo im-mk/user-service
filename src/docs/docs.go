@@ -38,7 +38,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Credentials"
+                            "$ref": "#/definitions/models.LoginRequest"
                         }
                     }
                 ],
@@ -84,7 +84,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.CreateUserRequest"
+                            "$ref": "#/definitions/models.CreateUserRequest"
                         }
                     }
                 ],
@@ -116,7 +116,7 @@ const docTemplate = `{
             "type": "object",
             "additionalProperties": {}
         },
-        "main.CreateUserRequest": {
+        "models.CreateUserRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -135,7 +135,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Credentials": {
+        "models.LoginRequest": {
             "type": "object",
             "properties": {
                 "password": {
@@ -165,13 +165,11 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
-    },
-    "externalDocs": {
-        "description": "OpenAPI",
-        "url": "https://swagger.io/resources/open-api/"
     }
 }`
 
