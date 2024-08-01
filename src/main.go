@@ -3,14 +3,15 @@ package main
 import (
 	"database/sql"
 
+	"github.com/im-mk/user-service/src/controllers"
 	_ "github.com/im-mk/user-service/src/docs"
 	"github.com/im-mk/user-service/src/repositories"
+	"github.com/im-mk/user-service/src/services"
 )
 
 var (
-	db       *sql.DB
-	jwtKey   = []byte("my_secret_key")
-	userRepo *repositories.UserRepository
+	db     *sql.DB
+	jwtKey = []byte("my_secret_key")
 )
 
 // @title           user-service
@@ -25,6 +26,9 @@ var (
 // @name Authorization
 func main() {
 	initDB()
-	userRepo = repositories.NewUserRepository(db)
-	registerRoutes()
+	userRepo := repositories.NewUserRepository(db)
+	userService := services.NewUserService(userRepo, jwtKey)
+	userController := controllers.NewUserController(userService)
+
+	registerRoutes(userController)
 }

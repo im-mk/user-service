@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"database/sql"
+
+	"github.com/im-mk/user-service/src/models"
 )
 
 type UserRepository struct {
@@ -20,8 +22,18 @@ func (r *UserRepository) UserExists(username, email string) (bool, error) {
 	return exists, err
 }
 
-func (r *UserRepository) CreateUser(username, email, password string) error {
+func (r *UserRepository) GetUserByUsername(username string) (*models.User, error) {
+	var user models.User
+	err := r.DB.QueryRow(`SELECT id, username, password FROM users WHERE username = $1`, username).
+		Scan(&user.ID, &user.Username, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *UserRepository) CreateUser(user models.User) error {
 	_, err := r.DB.Exec(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
-		username, email, password)
+		user.Username, user.Email, user.Password)
 	return err
 }
