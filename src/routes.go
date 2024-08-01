@@ -11,7 +11,7 @@ import (
 func registerRoutes(userController *controllers.UserController) {
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.POST("/login", loginHandler)
+	router.POST("/login", userController.Login)
 
 	auth := router.Group("/")
 	auth.Use(authMiddleware())

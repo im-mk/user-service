@@ -2,11 +2,10 @@ package services
 
 import (
 	"errors"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/im-mk/user-service/src/models"
 	"github.com/im-mk/user-service/src/repositories"
+	"github.com/im-mk/user-service/src/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,7 +28,7 @@ func (s *UserService) Login(creds models.LoginRequest) (string, error) {
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := generateJWT(user.Username, s.JwtKey)
+	token, err := utils.GenerateJWT(user.Username, s.JwtKey)
 	if err != nil {
 		return "", err
 	}
@@ -60,22 +59,4 @@ func (s *UserService) CreateUser(req models.CreateUserRequest) error {
 	}
 
 	return s.UserRepo.CreateUser(user)
-}
-
-func generateJWT(username string, jwtKey []byte) (string, error) {
-	expirationTime := time.Now().Add(5 * time.Minute)
-	claims := &models.Claims{
-		Username: username,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey)
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
 }
