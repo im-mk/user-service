@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 
-	"github.com/im-mk/user-service/src/config"
 	"github.com/im-mk/user-service/src/controllers"
 	_ "github.com/im-mk/user-service/src/docs"
 	"github.com/im-mk/user-service/src/repositories"
@@ -27,7 +26,7 @@ var (
 // @name						Authorization
 func main() {
 
-	appConfig := config.GetConfig()
+	appConfig := GetConfig()
 	initDB()
 	userRepo := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepo, jwtKey)

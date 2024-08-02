@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"log"
@@ -12,12 +12,12 @@ type ApplicationConfig struct {
 
 func GetConfig() ApplicationConfig {
 
-	viper.SetConfigType("json")
-	viper.SetConfigFile(".env")
-
 	appConfig := ApplicationConfig{
 		Port: "8080",
 	}
+
+	viper.SetConfigType("json")
+	viper.SetConfigFile(".env")
 
 	err := viper.ReadInConfig()
 
