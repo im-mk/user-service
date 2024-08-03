@@ -1,6 +1,16 @@
 version: "3.5"
 
 services:
+  user-service:
+    container_name: user-service
+    image: user-service
+    # environment:
+    #   db_host: postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - network1
+
   postgres:
     container_name: postgres
     image: postgres

@@ -2,14 +2,21 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/im-mk/user-service/src/docs"
 )
 
-func initDB() {
+func initDB(dbConnection DBConfig) {
 	var err error
-	dsn := "host=localhost user=postgres password=postgres dbname=user-service port=5432 sslmode=disable"
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+		dbConnection.Host,
+		dbConnection.User,
+		dbConnection.Password,
+		dbConnection.DBName,
+		dbConnection.Port,
+	)
 	db, err = sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)

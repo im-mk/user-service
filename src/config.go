@@ -6,18 +6,31 @@ import (
 	"github.com/spf13/viper"
 )
 
+type DBConfig struct {
+	Host     string
+	User     string
+	Password string
+	DBName   string
+	Port     int
+}
+
+type AppConfig struct {
+	Host string
+	Port int
+}
+
 type ApplicationConfig struct {
-	Port string
+	App AppConfig
+	DB  DBConfig
 }
 
 func GetConfig() ApplicationConfig {
 
-	appConfig := ApplicationConfig{
-		Port: "8080",
-	}
-
+	appConfig := ApplicationConfig{}
+	viper.AddConfigPath(".")
 	viper.SetConfigType("json")
-	viper.SetConfigFile(".env")
+	viper.SetConfigName("config")
+	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
 
@@ -25,9 +38,9 @@ func GetConfig() ApplicationConfig {
 		log.Fatalf("Error while reading config file %s", err)
 	}
 
-	value, ok := viper.Get("port").(string)
-	if !ok {
-		appConfig.Port = value
+	configErr := viper.Unmarshal(&appConfig)
+	if configErr != nil {
+		log.Fatalf("Invalid configuration %s", configErr)
 	}
 
 	return appConfig

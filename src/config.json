@@ -1,0 +1,13 @@
+{
+    "app" : {
+        "host": "localhost",
+        "port": "8080"
+    },
+    "db": {
+        "host": "localhost",
+        "user": "postgres",
+        "password": "postgres",
+        "dbname": "user-service",
+        "port": 5432
+    }
+}

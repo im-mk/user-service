@@ -10,7 +10,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func registerRoutes(userController *controllers.UserController, port string) {
+func registerRoutes(userController *controllers.UserController, appConfig AppConfig) {
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/login", userController.Login)
@@ -20,5 +20,5 @@ func registerRoutes(userController *controllers.UserController, port string) {
 	{
 		auth.POST("/users", userController.CreateUser)
 	}
-	router.Run(fmt.Sprintf("127.0.0.1:%s", port))
+	router.Run(fmt.Sprintf("%s:%d", appConfig.Host, appConfig.Port))
 }

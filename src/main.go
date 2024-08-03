@@ -27,10 +27,10 @@ var (
 func main() {
 
 	appConfig := GetConfig()
-	initDB()
+	initDB(appConfig.DB)
 	userRepo := repositories.NewUserRepository(db)
 	userService := services.NewUserService(userRepo, jwtKey)
 	userController := controllers.NewUserController(userService)
 
-	registerRoutes(userController, appConfig.Port)
+	registerRoutes(userController, appConfig.App)
 }
