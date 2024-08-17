@@ -10,7 +10,7 @@ import (
 
 func initDB(dbConnection DBConfig) {
 	var err error
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbConnection.Host,
 		dbConnection.User,
 		dbConnection.Password,

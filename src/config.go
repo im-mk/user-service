@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -11,12 +12,12 @@ type DBConfig struct {
 	User     string
 	Password string
 	DBName   string
-	Port     int
+	Port     string
 }
 
 type AppConfig struct {
 	Host string
-	Port int
+	Port string
 }
 
 type ApplicationConfig struct {
@@ -31,6 +32,8 @@ func GetConfig() ApplicationConfig {
 	viper.SetConfigType("json")
 	viper.SetConfigName("config")
 	viper.AutomaticEnv()
+
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	err := viper.ReadInConfig()
 

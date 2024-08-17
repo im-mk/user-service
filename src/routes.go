@@ -20,5 +20,5 @@ func registerRoutes(userController *controllers.UserController, appConfig AppCon
 	{
 		auth.POST("/users", userController.CreateUser)
 	}
-	router.Run(fmt.Sprintf("%s:%d", appConfig.Host, appConfig.Port))
+	router.Run(fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port))
 }

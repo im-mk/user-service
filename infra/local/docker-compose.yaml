@@ -4,12 +4,15 @@ services:
   user-service:
     container_name: user-service
     image: user-service
-    # environment:
-    #   db_host: postgres
+    environment:
+      DB_HOST: postgres
     ports:
       - "8080:8080"
     networks:
       - network1
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     container_name: postgres
@@ -25,6 +28,11 @@ services:
     networks:
       - network1
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   network1:
