@@ -1,17 +1,10 @@
 package main
 
 import (
-	"database/sql"
-
 	"github.com/im-mk/user-service/src/controllers"
 	_ "github.com/im-mk/user-service/src/docs"
 	"github.com/im-mk/user-service/src/repositories"
 	"github.com/im-mk/user-service/src/services"
-)
-
-var (
-	db     *sql.DB
-	jwtKey = []byte("my_secret_key")
 )
 
 // @title						user-service
@@ -27,10 +20,10 @@ var (
 func main() {
 
 	appConfig := GetConfig()
-	initDB(appConfig.DB)
+	db := initDB(appConfig.DB)
 	userRepo := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepo, jwtKey)
+	userService := services.NewUserService(userRepo, []byte(appConfig.JWTKey))
 	userController := controllers.NewUserController(userService)
 
-	registerRoutes(userController, appConfig.App)
+	registerRoutes(userController, appConfig.App, []byte(appConfig.JWTKey))
 }

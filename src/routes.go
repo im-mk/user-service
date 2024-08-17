@@ -10,13 +10,13 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func registerRoutes(userController *controllers.UserController, appConfig AppConfig) {
+func registerRoutes(userController *controllers.UserController, appConfig AppConfig, jwtKey []byte) {
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/login", userController.Login)
 
 	auth := router.Group("/")
-	auth.Use(authMiddleware())
+	auth.Use(authMiddleware(jwtKey))
 	{
 		auth.POST("/users", userController.CreateUser)
 	}

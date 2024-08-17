@@ -21,8 +21,9 @@ type AppConfig struct {
 }
 
 type ApplicationConfig struct {
-	App AppConfig
-	DB  DBConfig
+	App    AppConfig
+	DB     DBConfig
+	JWTKey string
 }
 
 func GetConfig() ApplicationConfig {
