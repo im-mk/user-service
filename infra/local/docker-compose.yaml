@@ -1,11 +1,9 @@
-version: "3.5"
-
 services:
   user-service:
     container_name: user-service
     image: user-service
     environment:
-      DB_HOST: postgres
+      DB_HOST: user-service-db
     ports:
       - "8080:8080"
     networks:
@@ -15,7 +13,7 @@ services:
         condition: service_healthy
 
   postgres:
-    container_name: postgres
+    container_name: user-service-db
     image: postgres
     volumes:
       - postgres:/data/postgres
