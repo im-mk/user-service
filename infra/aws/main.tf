@@ -47,6 +47,49 @@ resource "aws_iam_role" "codebuild_role" {
   ]
 }
 
+resource "aws_iam_role_policy" "codebuild_cloudwatch_logs_access" {
+  name = "codebuild-cloudwatch-logs-access"
+  role = aws_iam_role.codebuild_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "codebuild_s3_access" {
+  name = "codepipeline-s3-access"
+  role = aws_iam_role.codebuild_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion",
+          "s3:ListBucket",
+        ]
+        Resource = [
+          "${aws_s3_bucket.codepipeline_bucket.arn}",
+          "${aws_s3_bucket.codepipeline_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
 resource "aws_codebuild_project" "go_app_build" {
   name          = "${var.app_name}-build"
   description   = "Build project for Go application"
@@ -67,6 +110,7 @@ phases:
   install:
     commands:
       - echo Installing Go dependencies...
+      - cd src 
       - go mod download
   pre_build:
     commands:
