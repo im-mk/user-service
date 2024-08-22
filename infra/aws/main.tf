@@ -20,7 +20,3 @@ provider "aws" {
 resource "aws_ecr_repository" "go_app_ecr" {
   name = "${var.app_name}-repo"
 }
-
-output "repository_url" {
-  value = aws_ecr_repository.go_app_ecr.repository_url
-}
