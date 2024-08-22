@@ -8,7 +8,7 @@ terraform {
   required_version = ">= 0.14"
   backend "s3" {
     bucket = "internal-tfstate"
-    key    = "tf/code-service.tfstate"
+    key    = "code-service-ci.tfstate"
     region = "eu-west-2"
   }
 }
