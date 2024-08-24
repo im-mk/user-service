@@ -41,6 +41,8 @@ jobs:
         working-directory: ./infra/aws
         run: echo "ECR_URL=$(terraform output -raw repository_url)" >> $GITHUB_ENV
 
+      - name: Print ECR_URL
+        run: echo "ECR_URL is ${{ env.ECR_URL }}"
   build:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
