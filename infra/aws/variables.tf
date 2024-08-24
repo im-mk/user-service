@@ -8,18 +8,12 @@ variable "app_name" {
   type    = string
 }
 
-variable "repo_name" {
-  default = "user-service"
+variable "project" {
+  default = "clover"
   type    = string
 }
 
-
-variable "artifacts_bucket" {
-  default = "im-mk-app-artifacts"
-  type    = string
-}
-
-variable "code_branch" {
-  default = "feature/boilerplate"
+variable "app_environment" {
+  default = "production"
   type    = string
 }

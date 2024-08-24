@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/*
-
+      
 jobs:
   terraform:
     name: Setup ECR using Terraform
