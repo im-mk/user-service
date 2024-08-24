@@ -1,0 +1,14 @@
+{
+    "jwtkey": "my_secret_key",
+    "app" : {
+        "host": "0.0.0.0",
+        "port": "8080"
+    },
+    "db": {
+        "host": "localhost",
+        "user": "postgres",
+        "password": "postgres",
+        "dbname": "user-service",
+        "port": 5432
+    }
+}
