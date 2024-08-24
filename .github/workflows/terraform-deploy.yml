@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform
     env:
-      ECR_URL: ${{ needs.ecr.outputs.ecr-url }}
+      ECR_URL: ${{ needs.terraform.outputs.ecr-url }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
