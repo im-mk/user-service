@@ -75,6 +75,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
+        working-directory: ./src
         run: |
           docker build -t ${{ env.ECR_URL }}:latest .
 
