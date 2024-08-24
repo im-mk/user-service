@@ -46,9 +46,13 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     needs: terraform
+    env:
+      ECR_URL: ${{ needs.terraform.outputs.ecr-url }} # Correctly reference the job output
     steps:
       - name: Print ECR_URL
         run: echo "ECR_URL is ${{ needs.terraform.outputs.ecr-url }}"
+      - name: Print ECR_URL2
+        run: echo "ECR_URL is ${{ env.ECR_URL }}"
 
   # build:
   #   name: Build and Push Docker Image
