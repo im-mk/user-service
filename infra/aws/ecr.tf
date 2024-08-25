@@ -1,4 +1,4 @@
-resource "aws_ecr_repository" "repo" {
+resource "aws_ecr_repository" "ecr" {
   name = "${var.app_name}-ecr"
 
   tags = {
