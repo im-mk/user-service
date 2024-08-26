@@ -1,7 +1,7 @@
 resource "aws_security_group" "lb" {
   name        = "${var.app_name}-alb-sg"
   description = "controls access to the ALB"
-  vpc_id      = aws_vpc.aws-vpc.id
+  vpc_id      = local.vpc_id
 
   lifecycle {
     create_before_destroy = true
@@ -33,7 +33,7 @@ resource "aws_security_group" "lb" {
 resource "aws_security_group" "ecs_tasks" {
   name        = "${var.app_name}-ecs-tasks-sg"
   description = "allow inbound access from the ALB only"
-  vpc_id      = aws_vpc.aws-vpc.id
+  vpc_id      = local.vpc_id
 
   lifecycle {
     create_before_destroy = true

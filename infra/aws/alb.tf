@@ -1,6 +1,6 @@
 resource "aws_alb" "main" {
   name            = "${var.app_name}-alb"
-  subnets         = aws_subnet.public.*.id
+  subnets         = local.public_subnet_ids
   security_groups = [aws_security_group.lb.id]
   tags = {
     Name        = "${var.app_name}-alb"
@@ -14,7 +14,7 @@ resource "aws_alb_target_group" "app" {
   name        = "${var.app_name}-target-group"
   port        = 80
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.aws-vpc.id
+  vpc_id      = local.vpc_id
   target_type = "ip"
 
   health_check {
