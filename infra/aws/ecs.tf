@@ -18,6 +18,8 @@ data "template_file" "app" {
     fargate_memory = var.fargate_memory
     aws_region     = var.aws_region
     app_name       = var.app_name
+    health_path    = var.health_path
+    db_host        = aws_db_instance.user_service_db.address
   }
 }
 
@@ -41,7 +43,7 @@ resource "aws_ecs_service" "main" {
   name            = "${var.app_name}-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = var.az_count
+  desired_count   = var.container_count
   launch_type     = "FARGATE"
 
   network_configuration {

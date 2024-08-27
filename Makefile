@@ -1,8 +1,10 @@
-run:
+docs:
 	cd src && \
 	go install github.com/swaggo/swag/cmd/swag@latest && \
-	swag init --parseDependency --parseInternal && \
-	go run .
+	swag init --parseDependency --parseInternal 
+
+run:
+	cd src && go run .
 	
 build:
 	cd src && docker build -t user-service .

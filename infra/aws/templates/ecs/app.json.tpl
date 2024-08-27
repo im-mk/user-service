@@ -18,6 +18,34 @@
         "containerPort": ${app_port},
         "hostPort": ${app_port}
       }
+    ],
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "curl -f http://localhost:${app_port}/${health_path} || exit 1"
+      ],
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "startPeriod": 0
+    },
+    "secrets": [
+      {
+        "name": "DB_PASSWORD",
+        "valueFrom": "arn:aws:ssm:region:account-id:parameter/user-service-db/db-password"
+      },
+      {
+        "name": "DB_USER",
+        "valueFrom": "dbadmin"
+      },
+      {
+        "name": "DB_HOST",
+        "valueFrom": "${db_host}"
+      },
+      {
+        "name": "DB_DBNAME",
+        "valueFrom": "userservicedb"
+      }
     ]
   }
 ]

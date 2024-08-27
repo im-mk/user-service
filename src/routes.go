@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/im-mk/user-service/src/controllers"
@@ -12,6 +13,9 @@ import (
 
 func registerRoutes(userController *controllers.UserController, appConfig AppConfig, jwtKey []byte) {
 	router := gin.Default()
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, "healthy")
+	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/login", userController.Login)
 
