@@ -29,11 +29,7 @@
       "retries": 3,
       "startPeriod": 0
     },
-    "secrets": [
-      {
-        "name": "DB_PASSWORD",
-        "valueFrom": "arn:aws:ssm:${aws_region}:${account_id}:parameter/user-service-db/db-password"
-      },
+    "environment": [
       {
         "name": "DB_USER",
         "valueFrom": "${db_username}"
@@ -45,6 +41,12 @@
       {
         "name": "DB_DBNAME",
         "valueFrom": "${db_name}"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "DB_PASSWORD",
+        "valueFrom": "arn:aws:ssm:${aws_region}:${account_id}:parameter/user-service-db/db-password"
       }
     ]
   }
