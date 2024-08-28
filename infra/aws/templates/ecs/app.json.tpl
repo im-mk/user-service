@@ -32,7 +32,7 @@
     "secrets": [
       {
         "name": "DB_PASSWORD",
-        "valueFrom": "arn:aws:ssm:region:account-id:parameter/user-service-db/db-password"
+        "valueFrom": "arn:aws:ssm:${aws_region}:${account_id}:parameter/user-service-db/db-password"
       },
       {
         "name": "DB_USER",

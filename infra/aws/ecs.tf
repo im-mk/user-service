@@ -8,6 +8,8 @@ resource "aws_ecs_cluster" "main" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 data "template_file" "app" {
   template = file("./templates/ecs/app.json.tpl")
 
@@ -20,6 +22,7 @@ data "template_file" "app" {
     app_name       = var.app_name
     health_path    = var.health_path
     db_host        = aws_db_instance.user_service_db.address
+    account_id     = data.aws_caller_identity.current.account_id
   }
 }
 
