@@ -23,6 +23,8 @@ data "template_file" "app" {
     health_path    = var.health_path
     db_host        = aws_db_instance.user_service_db.address
     account_id     = data.aws_caller_identity.current.account_id
+    db_username    = var.db_username
+    db_name        = var.db_name
   }
 }
 

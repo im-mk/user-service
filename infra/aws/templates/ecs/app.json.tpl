@@ -36,7 +36,7 @@
       },
       {
         "name": "DB_USER",
-        "valueFrom": "dbadmin"
+        "valueFrom": "${db_username}"
       },
       {
         "name": "DB_HOST",
@@ -44,7 +44,7 @@
       },
       {
         "name": "DB_DBNAME",
-        "valueFrom": "userservicedb"
+        "valueFrom": "${db_name}"
       }
     ]
   }
