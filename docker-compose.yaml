@@ -11,12 +11,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
 
   postgres:
     container_name: user-service-db
     image: postgres
     volumes:
       - postgres:/data/postgres
+      - ./database/init:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
@@ -31,6 +34,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase
+    command: --defaultsFile=liquibase.properties update
+    volumes:
+      - ./database/liquibase.properties:/liquibase/liquibase.properties
+      - ./database/changelog.yaml:/liquibase/changelog/changelog.yaml
+      - ./database/sql:/liquibase/changelog/sql
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://user-service-db:5432/${POSTGRES_DATABASE:-userservicedb}
+      - LIQUIBASE_COMMAND_USERNAME=${POSTGRES_USER:-postgres}
+      - LIQUIBASE_COMMAND_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    networks:
+      - network1
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   network1:

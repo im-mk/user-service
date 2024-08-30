@@ -10,8 +10,13 @@ build:
 	cd src && docker build -t user-service .
 
 start-all:
-	make build && \
-	cd infra/local && make start
+	make build && docker-compose up -d
 
 stop-all:
-	cd infra/local && make stop
+	docker-compose down
+
+start-postgres:
+	docker-compose up -d postgres
+
+start-user-service:
+	docker-compose up -d user-service

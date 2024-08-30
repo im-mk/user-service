@@ -8,7 +8,7 @@
         "host": "localhost",
         "user": "postgres",
         "password": "postgres",
-        "dbname": "user-service",
+        "dbname": "userservicedb",
         "port": 5432
     }
 }
