@@ -3,8 +3,8 @@ name: Terraform Deploy and Push Docker Image
 on:
   push:
     branches:
-      - main
-      
+      - "none"
+
 jobs:
   terraform:
     name: Setup ECR using Terraform
