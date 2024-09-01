@@ -7,6 +7,8 @@ import (
 	"github.com/im-mk/user-service/src/models"
 )
 
+type JWTGenerator func(username string, jwtKey []byte) (string, error)
+
 func GenerateJWT(username string, jwtKey []byte) (string, error) {
 	expirationTime := time.Now().Add(5 * time.Minute)
 	claims := &models.Claims{

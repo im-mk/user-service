@@ -10,12 +10,17 @@ import (
 )
 
 type UserService struct {
-	UserRepo *repositories.UserRepository
-	JwtKey   []byte
+	UserRepo    repositories.UserRepositoryInterface
+	JwtKey      []byte
+	GenerateJWT utils.JWTGenerator
 }
 
-func NewUserService(userRepo *repositories.UserRepository, jwtKey []byte) *UserService {
-	return &UserService{UserRepo: userRepo, JwtKey: jwtKey}
+func NewUserService(userRepo repositories.UserRepositoryInterface, jwtKey []byte, generateJWT utils.JWTGenerator) *UserService {
+	if generateJWT == nil {
+		generateJWT = utils.GenerateJWT
+	}
+
+	return &UserService{UserRepo: userRepo, JwtKey: jwtKey, GenerateJWT: generateJWT}
 }
 
 func (s *UserService) Login(creds models.LoginRequest) (string, error) {
@@ -28,7 +33,7 @@ func (s *UserService) Login(creds models.LoginRequest) (string, error) {
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := utils.GenerateJWT(user.Username, s.JwtKey)
+	token, err := s.GenerateJWT(user.Username, s.JwtKey)
 	if err != nil {
 		return "", err
 	}

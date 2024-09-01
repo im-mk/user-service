@@ -6,6 +6,12 @@ import (
 	"github.com/im-mk/user-service/src/models"
 )
 
+type UserRepositoryInterface interface {
+    UserExists(username, email string) (bool, error)
+    GetUserByUsername(username string) (*models.User, error)
+    CreateUser(user models.User) error
+}
+
 type UserRepository struct {
 	DB *sql.DB
 }

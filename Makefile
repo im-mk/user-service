@@ -3,16 +3,19 @@ docs:
 	go install github.com/swaggo/swag/cmd/swag@latest && \
 	swag init --parseDependency --parseInternal 
 
+test:
+	cd src && go test ./... 
+
 run:
 	cd src && go run .
 	
 build:
-	cd src && docker build -t user-service .
+	cd src && go test ./... -v && docker build -t user-service .
 
-start-all:
+start:
 	make build && docker-compose up -d
 
-stop-all:
+stop:
 	docker-compose down
 
 start-postgres:
