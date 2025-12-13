@@ -46,6 +46,36 @@ info:
   title: user-service
   version: "1.0"
 paths:
+  /bootstrap:
+    post:
+      consumes:
+      - application/json
+      description: Create the first user if no users exist yet
+      parameters:
+      - description: Create User Request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Bootstrap first user
+      tags:
+      - bootstrap
   /login:
     post:
       consumes:

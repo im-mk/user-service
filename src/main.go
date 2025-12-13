@@ -10,7 +10,7 @@ import (
 
 // @title						user-service
 // @version					1.0
-// @description				service to manager users
+// @description				service to manage users
 // @contact.name				im-mk
 // @contact.url				http://github.com/im-mk
 // @host						localhost:8080

@@ -7,9 +7,10 @@ import (
 )
 
 type UserRepositoryInterface interface {
-    UserExists(username, email string) (bool, error)
-    GetUserByUsername(username string) (*models.User, error)
-    CreateUser(user models.User) error
+	UserExists(username, email string) (bool, error)
+	GetUserByUsername(username string) (*models.User, error)
+	CreateUser(user models.User) error
+	AnyUserExists() (bool, error)
 }
 
 type UserRepository struct {
@@ -42,4 +43,10 @@ func (r *UserRepository) CreateUser(user models.User) error {
 	_, err := r.DB.Exec(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
 		user.Username, user.Email, user.Password)
 	return err
+}
+
+func (r *UserRepository) AnyUserExists() (bool, error) {
+	var exists bool
+	err := r.DB.QueryRow(`SELECT EXISTS (SELECT 1 FROM users)`).Scan(&exists)
+	return exists, err
 }

@@ -30,6 +30,11 @@ func (m *MockUserRepository) CreateUser(user models.User) error {
 	return args.Error(0)
 }
 
+func (m *MockUserRepository) AnyUserExists() (bool, error) {
+	args := m.Called()
+	return args.Bool(0), args.Error(1)
+}
+
 func TestUserService_Login(t *testing.T) {
 	mockRepo := new(MockUserRepository)
 	jwtKey := []byte("my_secret_key")
@@ -141,13 +146,13 @@ func TestUserService_CreateUser(t *testing.T) {
 			Email:    "newuser@example.com",
 			Password: "password123",
 		}
-		
+
 		mockRepo.On("UserExists", req.Username, req.Email).Return(false, errors.New("db error")).Once()
 
 		err := userService.CreateUser(req)
-		
-		assert.Error(t, err)		
-		assert.EqualError(t, err, "failed to check for existing user")		
+
+		assert.Error(t, err)
+		assert.EqualError(t, err, "failed to check for existing user")
 		mockRepo.AssertExpectations(t)
 	})
 }

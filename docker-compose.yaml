@@ -16,13 +16,13 @@ services:
 
   postgres:
     container_name: user-service-db
-    image: postgres
+    image: postgres:18
     volumes:
-      - postgres:/data/postgres
+      # - postgres:/data/postgres # enable this line to persist data
       - ./database/init:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /data/postgres
     ports:
       - "5432:5432"
@@ -31,22 +31,22 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 3
 
   liquibase:
     container_name: liquibase
-    image: liquibase/liquibase
+    image: liquibase/liquibase:4.33
     command: --defaultsFile=liquibase.properties update
     volumes:
       - ./database/liquibase.properties:/liquibase/liquibase.properties
       - ./database/changelog.yaml:/liquibase/changelog/changelog.yaml
       - ./database/sql:/liquibase/changelog/sql
     environment:
-      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://user-service-db:5432/${POSTGRES_DATABASE:-userservicedb}
-      - LIQUIBASE_COMMAND_USERNAME=${POSTGRES_USER:-postgres}
-      - LIQUIBASE_COMMAND_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://user-service-db:5432/${POSTGRES_DB}
+      - LIQUIBASE_COMMAND_USERNAME=${POSTGRES_USER}
+      - LIQUIBASE_COMMAND_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - network1
     depends_on:

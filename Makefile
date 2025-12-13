@@ -13,13 +13,13 @@ build:
 	cd src && go test ./... -v && docker build -t user-service .
 
 start:
-	make build && docker-compose up -d
+	make build && docker compose up -d
 
 stop:
-	docker-compose down
+	docker compose down
 
 start-postgres:
-	docker-compose up -d postgres
+	docker compose up -d postgres
 
 start-user-service:
-	docker-compose up -d user-service
+	docker compose up -d user-service

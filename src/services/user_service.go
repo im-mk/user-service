@@ -65,3 +65,14 @@ func (s *UserService) CreateUser(req models.CreateUserRequest) error {
 
 	return s.UserRepo.CreateUser(user)
 }
+
+// Bootstrap creates the first user if no users exist in the system.
+func (s *UserService) Bootstrap(req models.CreateUserRequest) error {
+
+	any, err := s.UserRepo.AnyUserExists()
+	if err != nil || any {
+		return errors.New("an error occurred whilst performing bootstrap")
+	}
+
+	return s.CreateUser(req)
+}
