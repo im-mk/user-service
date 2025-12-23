@@ -39,12 +39,12 @@ func GetConfig() ApplicationConfig {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
+		log.Printf("Error while reading config file %s", err)
 	}
 
 	configErr := viper.Unmarshal(&appConfig)
 	if configErr != nil {
-		log.Fatalf("Invalid configuration %s", configErr)
+		log.Printf("Invalid configuration %s", configErr)
 	}
 
 	return appConfig

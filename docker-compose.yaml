@@ -4,8 +4,9 @@ services:
     image: user-service
     environment:
       DB_HOST: user-service-db
+      DB_PORT: 5432
     ports:
-      - "8080:8080"
+      - "8040:8040"
     networks:
       - network1
     depends_on:
@@ -25,7 +26,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /data/postgres
     ports:
-      - "5432:5432"
+      - "5436:5432"
     networks:
       - network1
     restart: unless-stopped

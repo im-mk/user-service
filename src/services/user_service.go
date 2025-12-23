@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/im-mk/user-service/src/models"
 	"github.com/im-mk/user-service/src/repositories"
@@ -33,7 +34,7 @@ func (s *UserService) Login(creds models.LoginRequest) (string, error) {
 		return "", errors.New("invalid credentials")
 	}
 
-	token, err := s.GenerateJWT(user.Username, s.JwtKey)
+	token, err := s.GenerateJWT(strconv.Itoa(user.ID), user.Username, s.JwtKey)
 	if err != nil {
 		return "", err
 	}

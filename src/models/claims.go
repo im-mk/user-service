@@ -1,10 +1,10 @@
 package models
 
-import (
-	"github.com/dgrijalva/jwt-go"
-)
+import "github.com/golang-jwt/jwt/v4"
 
 type Claims struct {
+	UserID   string `json:"sub"`
 	Username string `json:"username"`
-	jwt.StandardClaims
+	Scope    string `json:"scope"`
+	jwt.RegisteredClaims
 }

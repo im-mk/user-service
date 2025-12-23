@@ -13,7 +13,7 @@ import (
 // @description				service to manage users
 // @contact.name				im-mk
 // @contact.url				http://github.com/im-mk
-// @host						localhost:8080
+// @host						localhost:8040
 // @BasePath					/
 // @securityDefinitions.apikey	ApiKeyAuth
 // @in							header

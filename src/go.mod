@@ -3,8 +3,8 @@ module github.com/im-mk/user-service/src
 go 1.25
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.11.0
+	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1

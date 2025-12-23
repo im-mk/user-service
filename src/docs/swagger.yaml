@@ -37,12 +37,12 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:8080
+host: localhost:8040
 info:
   contact:
     name: im-mk
     url: http://github.com/im-mk
-  description: service to manager users
+  description: service to manage users
   title: user-service
   version: "1.0"
 paths:

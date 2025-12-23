@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "service to manager users",
+        "description": "service to manage users",
         "title": "user-service",
         "contact": {
             "name": "im-mk",
@@ -9,7 +9,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "localhost:8040",
     "basePath": "/",
     "paths": {
         "/bootstrap": {

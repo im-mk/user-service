@@ -1,7 +1,8 @@
+.PHONY: docs test run build start stop start-postgres start-user-service
+
 docs:
 	cd src && \
-	go install github.com/swaggo/swag/cmd/swag@latest && \
-	swag init --parseDependency --parseInternal 
+	go run github.com/swaggo/swag/cmd/swag@latest init --parseDependency --parseInternal
 
 test:
 	cd src && go test ./... 

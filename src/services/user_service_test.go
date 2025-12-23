@@ -38,7 +38,7 @@ func (m *MockUserRepository) AnyUserExists() (bool, error) {
 func TestUserService_Login(t *testing.T) {
 	mockRepo := new(MockUserRepository)
 	jwtKey := []byte("my_secret_key")
-	mockGenerateJWT := func(username string, key []byte) (string, error) {
+	mockGenerateJWT := func(userId string, username string, key []byte) (string, error) {
 		return "mockToken", nil
 	}
 
@@ -103,7 +103,7 @@ func TestUserService_Login(t *testing.T) {
 func TestUserService_CreateUser(t *testing.T) {
 	mockRepo := new(MockUserRepository)
 	jwtKey := []byte("my_secret_key")
-	mockGenerateJWT := func(username string, key []byte) (string, error) {
+	mockGenerateJWT := func(userId string, username string, key []byte) (string, error) {
 		return "mockToken", nil
 	}
 	userService := NewUserService(mockRepo, jwtKey, mockGenerateJWT)
