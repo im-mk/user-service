@@ -17,32 +17,6 @@ func NewUserController(userService *services.UserService) *UserController {
 	return &UserController{UserService: userService}
 }
 
-// @Summary		Logs in a user
-// @Description	Logs in a user and returns a JWT token
-// @Tags			auth
-// @Accept			json
-// @Produce		json
-// @Param			credentials	body		models.LoginRequest	true	"User credentials"
-// @Success		200			{string}	string				"token"
-// @Failure		400			{object}	gin.H				"Invalid request"
-// @Failure		500			{object}	gin.H				"Could not create token"
-// @Router			/login [post]
-func (ctrl *UserController) Login(c *gin.Context) {
-	var creds models.LoginRequest
-	if err := c.ShouldBindJSON(&creds); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	token, err := ctrl.UserService.Login(creds)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"token": token})
-}
-
 // @Summary		Create a new user
 // @Description	Create a new user with the input payload
 // @Tags			users

@@ -23,8 +23,11 @@ func main() {
 	appConfig := GetConfig()
 	db := initDB(appConfig.DB)
 	userRepo := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepo, []byte(appConfig.JWTKey), utils.GenerateJWT)
-	userController := controllers.NewUserController(userService)
+	userService := services.NewUserService(userRepo)
+	authService := services.NewAuthService(userRepo, []byte(appConfig.JWTKey), utils.GenerateJWT)
 
-	registerRoutes(userController, appConfig.App, []byte(appConfig.JWTKey))
+	userController := controllers.NewUserController(userService)
+	authController := controllers.NewAuthController(authService)
+
+	registerRoutes(userController, authController, appConfig.App, []byte(appConfig.JWTKey))
 }
