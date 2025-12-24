@@ -9,6 +9,7 @@ import (
 type UserRepositoryInterface interface {
 	UserExists(username, email string) (bool, error)
 	GetUserByUsername(username string) (*models.User, error)
+	GetUserByID(userID int) (*models.User, error)  // ← added
 	CreateUser(user models.User) error
 	AnyUserExists() (bool, error)
 }
@@ -39,6 +40,19 @@ func (r *UserRepository) GetUserByUsername(username string) (*models.User, error
 	return &user, nil
 }
 
+func (r *UserRepository) GetUserByID(userID int) (*models.User, error) {
+	var user models.User
+	err := r.DB.QueryRow(`
+		SELECT id, username, password
+		FROM users
+		WHERE id = $1
+	`, userID).Scan(&user.ID, &user.Username, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *UserRepository) CreateUser(user models.User) error {
 	_, err := r.DB.Exec(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
 		user.Username, user.Email, user.Password)
@@ -50,3 +64,5 @@ func (r *UserRepository) AnyUserExists() (bool, error) {
 	err := r.DB.QueryRow(`SELECT EXISTS (SELECT 1 FROM users)`).Scan(&exists)
 	return exists, err
 }
+
+

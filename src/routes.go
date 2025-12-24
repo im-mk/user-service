@@ -18,12 +18,14 @@ func registerRoutes(userController *controllers.UserController, authController *
 	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/login", authController.Login)
+	router.POST("/refresh", authController.Refresh)
 	router.POST("/bootstrap", userController.Bootstrap)
 
 	auth := router.Group("/")
 	auth.Use(authMiddleware(jwtKey))
 	{
 		auth.POST("/users", userController.CreateUser)
+		auth.GET("/users/:id", userController.GetUser)
 	}
 	router.Run(fmt.Sprintf("%s:%s", appConfig.Host, appConfig.Port))
 }

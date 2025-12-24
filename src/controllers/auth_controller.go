@@ -34,11 +34,28 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := ctrl.AuthService.Login(creds)
+	access, refresh, err := ctrl.AuthService.Login(creds)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{"token": access, "refresh_token": refresh})
+}
+
+// Refresh exchanges a refresh token for a new access token
+func (ctrl *AuthController) Refresh(c *gin.Context) {
+	var req models.RefreshRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	access, refresh, err := ctrl.AuthService.Refresh(req.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": access, "refresh_token": refresh})
 }

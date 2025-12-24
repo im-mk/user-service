@@ -5,7 +5,6 @@ import (
 	_ "github.com/im-mk/user-service/src/docs"
 	"github.com/im-mk/user-service/src/repositories"
 	"github.com/im-mk/user-service/src/services"
-	"github.com/im-mk/user-service/src/utils"
 )
 
 // @title						user-service
@@ -23,8 +22,9 @@ func main() {
 	appConfig := GetConfig()
 	db := initDB(appConfig.DB)
 	userRepo := repositories.NewUserRepository(db)
+	refreshTokenRepo := repositories.NewRefreshTokenRepository(db)
 	userService := services.NewUserService(userRepo)
-	authService := services.NewAuthService(userRepo, []byte(appConfig.JWTKey), utils.GenerateJWT)
+	authService := services.NewAuthService(userRepo, refreshTokenRepo, []byte(appConfig.JWTKey))
 
 	userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(authService)

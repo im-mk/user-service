@@ -41,6 +41,22 @@ func (s *UserService) CreateUser(req models.CreateUserRequest) error {
 	return s.UserRepo.CreateUser(user)
 }
 
+func (s *UserService) GetUser(userId int) (*models.UserDetails, error) {
+
+	user, err := s.UserRepo.GetUserByID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	userDetails := &models.UserDetails{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+	}
+
+	return userDetails, nil
+}
+
 // Bootstrap creates the first user if no users exist in the system.
 func (s *UserService) Bootstrap(req models.CreateUserRequest) error {
 

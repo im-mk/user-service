@@ -112,7 +112,7 @@ const docTemplate = `{
         },
         "/users": {
             "post": {
-                "description": "Create a new user with the input payload",
+                "description": "Return user details with the given ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -122,7 +122,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Create a new user",
+                "summary": "Return user details",
                 "parameters": [
                     {
                         "description": "Create User Request",
