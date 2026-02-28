@@ -4,18 +4,24 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/im-mk/user-service/src/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/crypto/bcrypt"
-
-	"github.com/im-mk/user-service/src/models"
 )
 
 func TestAuthService_Login(t *testing.T) {
+	authConfig := models.AuthConfig{
+		Issuer:                    "test-issuer",
+		Audience:                  "test-audience",
+		TokenExpirySeconds:        3600,
+		RefreshTokenExpirySeconds: 7200,
+		Kid:                       "test-kid",
+	}
 	mockRepo := new(MockUserRepository)
-	jwtKey := []byte("my_secret_key")
 	mockRefreshRepo := new(MockRefreshTokenRepository)
-	authService := NewAuthService(mockRepo, mockRefreshRepo, jwtKey)
+	mockTokenProv := new(MockTokenProvider)
+	authService := NewAuthService(mockRepo, mockRefreshRepo, mockTokenProv, authConfig)
 
 	t.Run("successful login", func(t *testing.T) {
 		password := "password123"
@@ -28,7 +34,8 @@ func TestAuthService_Login(t *testing.T) {
 		}
 
 		mockRepo.On("GetUserByUsername", "testuser").Return(mockUser, nil)
-		// save refresh token expected
+		mockTokenProv.On("GenerateAccessToken", "0", "testuser").Return("tokA", nil)
+		mockTokenProv.On("GenerateRefreshToken").Return("tokR", nil)
 		mockRefreshRepo.On("SaveRefreshToken", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
 		access, refresh, err := authService.Login(models.LoginRequest{
@@ -68,6 +75,7 @@ func TestAuthService_Login(t *testing.T) {
 
 	t.Run("user not found", func(t *testing.T) {
 		mockRepo.On("GetUserByUsername", "unknownuser").Return(&models.User{}, errors.New("user not found"))
+		// provider not invoked
 
 		access, refresh, err := authService.Login(models.LoginRequest{
 			Username: "unknownuser",
@@ -85,7 +93,8 @@ func TestAuthService_Login(t *testing.T) {
 		// Fresh mocks for this subtest
 		inactiveMockRepo := new(MockUserRepository)
 		inactiveMockRefreshRepo := new(MockRefreshTokenRepository)
-		inactiveAuthService := NewAuthService(inactiveMockRepo, inactiveMockRefreshRepo, jwtKey)
+		inactiveTokenProv := new(MockTokenProvider)
+		inactiveAuthService := NewAuthService(inactiveMockRepo, inactiveMockRefreshRepo, inactiveTokenProv, authConfig)
 
 		password := "password123"
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -114,7 +123,8 @@ func TestAuthService_Login(t *testing.T) {
 		// Fresh mocks for this subtest
 		unverifiedMockRepo := new(MockUserRepository)
 		unverifiedMockRefreshRepo := new(MockRefreshTokenRepository)
-		unverifiedAuthService := NewAuthService(unverifiedMockRepo, unverifiedMockRefreshRepo, jwtKey)
+		unverifiedTokenProv := new(MockTokenProvider)
+		unverifiedAuthService := NewAuthService(unverifiedMockRepo, unverifiedMockRefreshRepo, unverifiedTokenProv, authConfig)
 
 		password := "password123"
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

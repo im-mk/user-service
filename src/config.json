@@ -1,5 +1,13 @@
 {
-    "jwtkey": "my_secret_key",
+    "auth": {
+        "privateKeyPath": ".keys/private.pem",
+        "publicKeyPath": ".keys/public.pem",
+        "tokenExpirySeconds": 3600,
+        "refreshTokenExpirySeconds": 604800,
+        "issuer": "user-service",
+        "audience": "",
+        "kid": "default-key"
+    },
     "app" : {
         "host": "0.0.0.0",
         "port": "8040"

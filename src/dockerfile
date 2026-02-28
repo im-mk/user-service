@@ -1,25 +1,26 @@
-FROM golang:1.25-bookworm AS builder
-
-ENV CGO_ENABLED=0
-
+FROM golang:1.25-bookworm AS base
 WORKDIR /app
-
 COPY go.* .
 RUN go mod download
 COPY . .
 
+FROM base AS test
+RUN go test ./...
+
+FROM base AS build
+ENV CGO_ENABLED=0
 RUN go build -v -o server
 
 FROM alpine:3.23
-
-RUN apk update
-RUN apk add curl
+# ENV GIN_MODE=release
+RUN apk add --no-cache curl
 
 HEALTHCHECK --start-period=10s --interval=30s --timeout=5s \
-    CMD curl -f http://localhost:8040/health || exit 1
+    CMD curl -f http://localhost:8070/health || exit 1
 
 WORKDIR /app
-COPY --from=builder /app/server .
-COPY --from=builder /app/config.json .
-EXPOSE 8040
+COPY --from=build /app/server .
+COPY --from=build /app/config.json .
+
+EXPOSE 8070
 CMD ["/app/server"]

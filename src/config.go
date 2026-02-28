@@ -4,31 +4,14 @@ import (
 	"log"
 	"strings"
 
+	"github.com/im-mk/user-service/src/models"
 	"github.com/spf13/viper"
 )
 
-type DBConfig struct {
-	Host     string
-	User     string
-	Password string
-	DBName   string
-	Port     string
-}
 
-type AppConfig struct {
-	Host string
-	Port string
-}
+func GetConfig() models.ApplicationConfig {
 
-type ApplicationConfig struct {
-	App    AppConfig
-	DB     DBConfig
-	JWTKey string
-}
-
-func GetConfig() ApplicationConfig {
-
-	appConfig := ApplicationConfig{}
+	appConfig := models.ApplicationConfig{}
 	viper.AddConfigPath(".")
 	viper.SetConfigType("json")
 	viper.SetConfigName("config")
@@ -45,6 +28,16 @@ func GetConfig() ApplicationConfig {
 	configErr := viper.Unmarshal(&appConfig)
 	if configErr != nil {
 		log.Printf("Invalid configuration %s", configErr)
+	}
+
+	if appConfig.Auth.TokenExpirySeconds == 0 {
+		log.Printf("using default time of 600 seconds")
+		appConfig.Auth.TokenExpirySeconds = 600
+	}
+
+	if appConfig.Auth.RefreshTokenExpirySeconds == 0 {
+		log.Printf("using default time of 604800 seconds")
+		appConfig.Auth.RefreshTokenExpirySeconds = 604800
 	}
 
 	return appConfig
