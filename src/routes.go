@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/im-mk/user-service/src/controllers"
 	_ "github.com/im-mk/user-service/src/docs"
+	"github.com/im-mk/user-service/src/middleware"
 	"github.com/im-mk/user-service/src/models"
-	"github.com/im-mk/user-service/src/services"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -27,7 +27,7 @@ func registerRoutes(userController *controllers.UserController, authController *
 	router.POST("/bootstrap", userController.Bootstrap)
 
 	auth := router.Group("/")
-	auth.Use(services.AuthMiddleware(publicKey, authCfg))
+	auth.Use(middleware.AuthMiddleware(publicKey, authCfg))
 	{
 		auth.POST("/users", userController.CreateUser)
 		auth.GET("/users/:id", userController.GetUser)

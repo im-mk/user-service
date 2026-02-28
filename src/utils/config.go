@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"log"
@@ -7,7 +7,6 @@ import (
 	"github.com/im-mk/user-service/src/models"
 	"github.com/spf13/viper"
 )
-
 
 func GetConfig() models.ApplicationConfig {
 

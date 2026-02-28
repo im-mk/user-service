@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func initDB(dbConnection models.DBConfig) *sqlx.DB {
+func InitDB(dbConnection models.DBConfig) *sqlx.DB {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbConnection.Host,
 		dbConnection.User,

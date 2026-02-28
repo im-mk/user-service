@@ -1,4 +1,4 @@
-package services
+package middleware
 
 import (
 	"crypto/rsa"
@@ -39,9 +39,7 @@ func AuthMiddleware(publicKey *rsa.PublicKey, cfg models.AuthConfig) gin.Handler
 			}
 
 			return publicKey, nil
-		},
-			// pass in options collected above
-			opts...)
+		}, opts...)
 
 		if err != nil || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
