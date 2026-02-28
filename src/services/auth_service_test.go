@@ -21,8 +21,10 @@ func TestAuthService_Login(t *testing.T) {
 		password := "password123"
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		mockUser := &models.User{
-			Username: "testuser",
-			Password: string(hashedPassword),
+			Username:   "testuser",
+			Password:   string(hashedPassword),
+			IsActive:   true,
+			IsVerified: true,
 		}
 
 		mockRepo.On("GetUserByUsername", "testuser").Return(mockUser, nil)
@@ -44,8 +46,10 @@ func TestAuthService_Login(t *testing.T) {
 		password := "password123"
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		mockUser := &models.User{
-			Username: "testuser",
-			Password: string(hashedPassword),
+			Username:   "testuser",
+			Password:   string(hashedPassword),
+			IsActive:   true,
+			IsVerified: true,
 		}
 
 		mockRepo.On("GetUserByUsername", "testuser").Return(mockUser, nil)
@@ -75,5 +79,63 @@ func TestAuthService_Login(t *testing.T) {
 		assert.Equal(t, "", refresh)
 		assert.EqualError(t, err, "invalid credentials")
 		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("inactive account", func(t *testing.T) {
+		// Fresh mocks for this subtest
+		inactiveMockRepo := new(MockUserRepository)
+		inactiveMockRefreshRepo := new(MockRefreshTokenRepository)
+		inactiveAuthService := NewAuthService(inactiveMockRepo, inactiveMockRefreshRepo, jwtKey)
+
+		password := "password123"
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		mockUser := &models.User{
+			Username:   "testuser",
+			Password:   string(hashedPassword),
+			IsActive:   false,
+			IsVerified: true,
+		}
+
+		inactiveMockRepo.On("GetUserByUsername", "testuser").Return(mockUser, nil)
+
+		access, refresh, err := inactiveAuthService.Login(models.LoginRequest{
+			Username: "testuser",
+			Password: password,
+		})
+
+		assert.Error(t, err)
+		assert.EqualError(t, err, "account inactive")
+		assert.Equal(t, "", access)
+		assert.Equal(t, "", refresh)
+		inactiveMockRepo.AssertExpectations(t)
+	})
+
+	t.Run("unverified account", func(t *testing.T) {
+		// Fresh mocks for this subtest
+		unverifiedMockRepo := new(MockUserRepository)
+		unverifiedMockRefreshRepo := new(MockRefreshTokenRepository)
+		unverifiedAuthService := NewAuthService(unverifiedMockRepo, unverifiedMockRefreshRepo, jwtKey)
+
+		password := "password123"
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		mockUser := &models.User{
+			Username:   "testuser",
+			Password:   string(hashedPassword),
+			IsActive:   true,
+			IsVerified: false,
+		}
+
+		unverifiedMockRepo.On("GetUserByUsername", "testuser").Return(mockUser, nil)
+
+		access, refresh, err := unverifiedAuthService.Login(models.LoginRequest{
+			Username: "testuser",
+			Password: password,
+		})
+
+		assert.Error(t, err)
+		assert.EqualError(t, err, "account unverified")
+		assert.Equal(t, "", access)
+		assert.Equal(t, "", refresh)
+		unverifiedMockRepo.AssertExpectations(t)
 	})
 }

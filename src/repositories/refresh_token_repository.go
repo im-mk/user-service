@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type RefreshTokenRepositoryInterface interface {
@@ -14,10 +16,10 @@ type RefreshTokenRepositoryInterface interface {
 }
 
 type RefreshTokenRepository struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
-func NewRefreshTokenRepository(db *sql.DB) *RefreshTokenRepository {
+func NewRefreshTokenRepository(db *sqlx.DB) *RefreshTokenRepository {
 	return &RefreshTokenRepository{DB: db}
 }
 
@@ -36,12 +38,12 @@ func (r *RefreshTokenRepository) SaveRefreshToken(
 
 func (r *RefreshTokenRepository) GetRefreshToken(tokenHash string) (string, error) {
 	var userID string
-	err := r.DB.QueryRow(`
+	err := r.DB.Get(&userID, `
 		SELECT user_id
 		FROM refresh_tokens
 		WHERE token_hash = $1
 		  AND expires_at > NOW()
-	`, tokenHash).Scan(&userID)
+	`, tokenHash)
 
 	if err == sql.ErrNoRows {
 		return "", errors.New("refresh token not found or expired")

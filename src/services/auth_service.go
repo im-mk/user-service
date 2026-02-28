@@ -31,7 +31,6 @@ func NewAuthService(
 	}
 }
 
-// Login issues access + refresh tokens
 func (s *AuthService) Login(creds models.LoginRequest) (string, string, error) {
 	user, err := s.UserRepo.GetUserByUsername(creds.Username)
 	if err != nil {
@@ -40,6 +39,14 @@ func (s *AuthService) Login(creds models.LoginRequest) (string, string, error) {
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
 		return "", "", errors.New("invalid credentials")
+	}
+
+	if !user.IsActive {
+		return "", "", errors.New("account inactive")
+	}
+
+	if !user.IsVerified {
+		return "", "", errors.New("account unverified")
 	}
 
 	accessToken, err := utils.GenerateAccessToken(
@@ -70,7 +77,6 @@ func (s *AuthService) Login(creds models.LoginRequest) (string, string, error) {
 	return accessToken, refreshToken, nil
 }
 
-// Refresh rotates refresh token and issues new access token
 func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 	hash := hashToken(oldRefreshToken)
 
@@ -79,7 +85,6 @@ func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 		return "", "", errors.New("invalid refresh token")
 	}
 
-	// rotate refresh token
 	_ = s.RefreshTokenRepo.DeleteRefreshToken(hash)
 
 	newRefreshToken, err := utils.GenerateRefreshToken()
@@ -120,13 +125,11 @@ func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 	return accessToken, newRefreshToken, nil
 }
 
-// Logout revokes refresh token
 func (s *AuthService) Logout(refreshToken string) error {
 	hash := hashToken(refreshToken)
 	return s.RefreshTokenRepo.DeleteRefreshToken(hash)
 }
 
-// hashToken hashes refresh tokens before storage
 func hashToken(token string) string {
 	h := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(h[:])

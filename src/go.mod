@@ -14,6 +14,8 @@ require (
 	golang.org/x/crypto v0.46.0
 )
 
+require github.com/jmoiron/sqlx v1.4.0 // indirect
+
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect

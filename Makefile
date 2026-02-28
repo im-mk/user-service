@@ -20,7 +20,10 @@ stop:
 	docker compose down
 
 start-postgres:
-	docker compose up -d postgres
+	docker compose up -d postgres liquibase
 
+start-pgadmin:
+	docker compose up -d pgadmin
+	
 start-user-service:
 	docker compose up -d user-service

@@ -1,3 +1,4 @@
+name: user-service-stack
 services:
   user-service:
     container_name: user-service
@@ -54,9 +55,27 @@ services:
       postgres:
         condition: service_healthy
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False" # required to mount the servers.json file
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False" # Avoid master password prompt
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - network1
+    restart: unless-stopped
+
 networks:
   network1:
     driver: bridge
 
 volumes:
   postgres:
+  pgadmin:

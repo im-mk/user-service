@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/im-mk/user-service/src/models"
 )
@@ -9,31 +9,36 @@ import (
 type UserRepositoryInterface interface {
 	UserExists(username, email string) (bool, error)
 	GetUserByUsername(username string) (*models.User, error)
-	GetUserByID(userID int) (*models.User, error)  // ← added
+	GetUserByID(userID int) (*models.User, error)
 	CreateUser(user models.User) error
 	AnyUserExists() (bool, error)
 }
 
 type UserRepository struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
+func NewUserRepository(db *sqlx.DB) *UserRepository {
 	return &UserRepository{DB: db}
 }
 
 func (r *UserRepository) UserExists(username, email string) (bool, error) {
 	var exists bool
-	err := r.DB.QueryRow(`SELECT EXISTS (
+	err := r.DB.Get(&exists, `SELECT EXISTS (
         SELECT 1 FROM users WHERE username = $1 OR email = $2
-    )`, username, email).Scan(&exists)
+    )`, username, email)
 	return exists, err
 }
 
 func (r *UserRepository) GetUserByUsername(username string) (*models.User, error) {
 	var user models.User
-	err := r.DB.QueryRow(`SELECT id, username, password FROM users WHERE username = $1`, username).
-		Scan(&user.ID, &user.Username, &user.Password)
+	err := r.DB.Get(&user, `
+		SELECT id, username, email, password,
+		       first_name, middle_name, last_name,
+		       is_active, is_verified
+		FROM users
+		WHERE username = $1
+	`, username)
 	if err != nil {
 		return nil, err
 	}
@@ -42,11 +47,13 @@ func (r *UserRepository) GetUserByUsername(username string) (*models.User, error
 
 func (r *UserRepository) GetUserByID(userID int) (*models.User, error) {
 	var user models.User
-	err := r.DB.QueryRow(`
-		SELECT id, username, password
+	err := r.DB.Get(&user, `
+		SELECT id, username, email, password,
+		       first_name, middle_name, last_name,
+		       is_active, is_verified
 		FROM users
 		WHERE id = $1
-	`, userID).Scan(&user.ID, &user.Username, &user.Password)
+	`, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -54,15 +61,15 @@ func (r *UserRepository) GetUserByID(userID int) (*models.User, error) {
 }
 
 func (r *UserRepository) CreateUser(user models.User) error {
-	_, err := r.DB.Exec(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
-		user.Username, user.Email, user.Password)
+	_, err := r.DB.Exec(`INSERT INTO users (username, email, password, first_name, middle_name, last_name, is_active, is_verified) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+		user.Username, user.Email, user.Password,
+		user.FirstName, user.MiddleName, user.LastName, user.IsActive, user.IsVerified)
 	return err
 }
 
 func (r *UserRepository) AnyUserExists() (bool, error) {
 	var exists bool
-	err := r.DB.QueryRow(`SELECT EXISTS (SELECT 1 FROM users)`).Scan(&exists)
+	err := r.DB.Get(&exists, `SELECT EXISTS (SELECT 1 FROM users)`)
 	return exists, err
 }
-
-

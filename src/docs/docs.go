@@ -173,6 +173,15 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "middle_name": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
@@ -202,8 +211,23 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "first_name": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_verified": {
+                    "type": "boolean"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "middle_name": {
+                    "type": "string"
                 },
                 "password": {
                     "type": "string"

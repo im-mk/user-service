@@ -1,15 +1,16 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 
 	_ "github.com/im-mk/user-service/src/docs"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq" // postgres driver
 )
 
-func initDB(dbConnection DBConfig) *sql.DB {
-	var err error
+// initDB establishes a connection using sqlx and returns the wrapper DB.
+func initDB(dbConnection DBConfig) *sqlx.DB {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbConnection.Host,
 		dbConnection.User,
@@ -17,7 +18,7 @@ func initDB(dbConnection DBConfig) *sql.DB {
 		dbConnection.DBName,
 		dbConnection.Port,
 	)
-	db, err := sql.Open("postgres", dsn)
+	db, err := sqlx.Open("postgres", dsn)
 	if err != nil {
 		log.Printf("Failed to connect to database: %v", err)
 	}

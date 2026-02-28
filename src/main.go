@@ -20,6 +20,7 @@ import (
 func main() {
 
 	appConfig := GetConfig()
+	// initialize sqlx database wrapper
 	db := initDB(appConfig.DB)
 	userRepo := repositories.NewUserRepository(db)
 	refreshTokenRepo := repositories.NewRefreshTokenRepository(db)

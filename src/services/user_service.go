@@ -33,9 +33,14 @@ func (s *UserService) CreateUser(req models.CreateUserRequest) error {
 	}
 
 	user := models.User{
-		Username: req.Username,
-		Email:    req.Email,
-		Password: string(hashedPassword),
+		Username:   req.Username,
+		Email:      req.Email,
+		Password:   string(hashedPassword),
+		FirstName:  req.FirstName,
+		MiddleName: req.MiddleName,
+		LastName:   req.LastName,
+		IsActive:   true,
+		IsVerified: false,
 	}
 
 	return s.UserRepo.CreateUser(user)
@@ -49,9 +54,14 @@ func (s *UserService) GetUser(userId int) (*models.UserDetails, error) {
 	}
 
 	userDetails := &models.UserDetails{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
+		ID:         user.ID,
+		Username:   user.Username,
+		Email:      user.Email,
+		FirstName:  user.FirstName,
+		MiddleName: user.MiddleName,
+		LastName:   user.LastName,
+		IsActive:   user.IsActive,
+		IsVerified: user.IsVerified,
 	}
 
 	return userDetails, nil
@@ -65,5 +75,21 @@ func (s *UserService) Bootstrap(req models.CreateUserRequest) error {
 		return errors.New("an error occurred whilst performing bootstrap")
 	}
 
-	return s.CreateUser(req)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	user := models.User{
+		Username:   req.Username,
+		Email:      req.Email,
+		Password:   string(hashedPassword),
+		FirstName:  req.FirstName,
+		MiddleName: req.MiddleName,
+		LastName:   req.LastName,
+		IsActive:   true,
+		IsVerified: true, // verify bootstrap user by default
+	}
+
+	return s.UserRepo.CreateUser(user)
 }
