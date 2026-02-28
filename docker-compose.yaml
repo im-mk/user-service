@@ -19,7 +19,7 @@ services:
 
   user-service-db:
     container_name: user-service-db
-    image: postgres:18
+    image: postgres:18.3
     volumes:
       # - user-service-db:/data/postgres # enable this line to persist data
       - ./database/init:/docker-entrypoint-initdb.d
@@ -40,7 +40,9 @@ services:
 
   user-service-liquibase:
     container_name: user-service-liquibase
-    image: liquibase/liquibase:4.33
+    image: liquibase/liquibase:5.0.1
+    entrypoint:
+      ["sh", "-c", "liquibase lpm add postgresql --global && liquibase update"]
     command: --defaultsFile=liquibase.properties update
     volumes:
       - ./database/liquibase.properties:/liquibase/liquibase.properties
