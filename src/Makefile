@@ -6,5 +6,8 @@ docs:
 test:
 	go test ./...
 
+build:
+	go build -o user-service .
+	
 start:
 	go run .

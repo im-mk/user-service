@@ -47,7 +47,6 @@ func AuthMiddleware(publicKey *rsa.PublicKey, cfg models.AuthConfig) gin.Handler
 			return
 		}
 
-		// Extract claims safely
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -56,7 +55,6 @@ func AuthMiddleware(publicKey *rsa.PublicKey, cfg models.AuthConfig) gin.Handler
 			return
 		}
 
-		// Add useful values to Gin context
 		c.Set("userID", claims["sub"])
 		c.Set("username", claims["username"])
 		c.Set("scope", claims["scope"])
