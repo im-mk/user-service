@@ -79,13 +79,13 @@ Generate the RSA keypair used for signing JWT tokens:
 
 Required variables (see docker-compose.yaml):
 
--   POSTGRES_USER
--   POSTGRES_PASSWORD
--   POSTGRES_DB
+-   USER_SERVICE_DB_USER
+-   USER_SERVICE_DB_PASSWORD
+-   USER_SERVICE_DB_NAME
 -   PGADMIN_DEFAULT_EMAIL
 -   PGADMIN_DEFAULT_PASSWORD
 -   PGADMIN_PORT
--   APP_PORT
+-   USER_SERVICE_PORT
 
 ------------------------------------------------------------------------
 
