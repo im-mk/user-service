@@ -9,30 +9,38 @@ import (
 
 	"github.com/im-mk/user-service/src/models"
 	"github.com/im-mk/user-service/src/repositories"
-	"github.com/im-mk/user-service/src/utils"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type TokenProvider interface {
+	GenerateAccessToken(userID, username string) (string, error)
+	GenerateRefreshToken() (string, error)
+}
 
 type AuthService struct {
 	UserRepo         repositories.UserRepositoryInterface
 	RefreshTokenRepo repositories.RefreshTokenRepositoryInterface
-	AccessKey        []byte
+	TokenProvider    TokenProvider
+	AuthConfig       models.AuthConfig
 }
 
 func NewAuthService(
 	userRepo repositories.UserRepositoryInterface,
 	refreshRepo repositories.RefreshTokenRepositoryInterface,
-	accessKey []byte,
+	tokenProvider TokenProvider,
+	authConfig models.AuthConfig,
 ) *AuthService {
+
 	return &AuthService{
 		UserRepo:         userRepo,
 		RefreshTokenRepo: refreshRepo,
-		AccessKey:        accessKey,
+		TokenProvider:    tokenProvider,
+		AuthConfig:       authConfig,
 	}
 }
 
-// Login issues access + refresh tokens
 func (s *AuthService) Login(creds models.LoginRequest) (string, string, error) {
+
 	user, err := s.UserRepo.GetUserByUsername(creds.Username)
 	if err != nil {
 		return "", "", errors.New("invalid credentials")
@@ -42,16 +50,23 @@ func (s *AuthService) Login(creds models.LoginRequest) (string, string, error) {
 		return "", "", errors.New("invalid credentials")
 	}
 
-	accessToken, err := utils.GenerateAccessToken(
+	if !user.IsActive {
+		return "", "", errors.New("account inactive")
+	}
+
+	if !user.IsVerified {
+		return "", "", errors.New("account unverified")
+	}
+
+	accessToken, err := s.TokenProvider.GenerateAccessToken(
 		strconv.Itoa(user.ID),
 		user.Username,
-		s.AccessKey,
 	)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := utils.GenerateRefreshToken()
+	refreshToken, err := s.TokenProvider.GenerateRefreshToken()
 	if err != nil {
 		return "", "", err
 	}
@@ -70,7 +85,6 @@ func (s *AuthService) Login(creds models.LoginRequest) (string, string, error) {
 	return accessToken, refreshToken, nil
 }
 
-// Refresh rotates refresh token and issues new access token
 func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 	hash := hashToken(oldRefreshToken)
 
@@ -79,10 +93,9 @@ func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 		return "", "", errors.New("invalid refresh token")
 	}
 
-	// rotate refresh token
 	_ = s.RefreshTokenRepo.DeleteRefreshToken(hash)
 
-	newRefreshToken, err := utils.GenerateRefreshToken()
+	newRefreshToken, err := s.TokenProvider.GenerateRefreshToken()
 	if err != nil {
 		return "", "", err
 	}
@@ -92,8 +105,9 @@ func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 	err = s.RefreshTokenRepo.SaveRefreshToken(
 		newHash,
 		userID,
-		time.Now().Add(24*time.Hour),
+		time.Now().Add(time.Duration(s.AuthConfig.RefreshTokenExpirySeconds)*time.Second),
 	)
+
 	if err != nil {
 		return "", "", err
 	}
@@ -108,10 +122,9 @@ func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 		return "", "", err
 	}
 
-	accessToken, err := utils.GenerateAccessToken(
+	accessToken, err := s.TokenProvider.GenerateAccessToken(
 		userID,
 		user.Username,
-		s.AccessKey,
 	)
 	if err != nil {
 		return "", "", err
@@ -120,13 +133,11 @@ func (s *AuthService) Refresh(oldRefreshToken string) (string, string, error) {
 	return accessToken, newRefreshToken, nil
 }
 
-// Logout revokes refresh token
 func (s *AuthService) Logout(refreshToken string) error {
 	hash := hashToken(refreshToken)
 	return s.RefreshTokenRepo.DeleteRefreshToken(hash)
 }
 
-// hashToken hashes refresh tokens before storage
 func hashToken(token string) string {
 	h := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(h[:])

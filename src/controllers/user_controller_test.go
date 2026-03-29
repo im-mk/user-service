@@ -30,7 +30,16 @@ func TestGetUserHandler(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		funcRepo := &fakeRepo{f: func(id int) (*models.User, error) {
-			return &models.User{ID: id, Username: "alice", Email: "alice@example.com", Password: "x"}, nil
+			return &models.User{
+				ID:         id,
+				Username:   "alice",
+				Email:      "alice@example.com",
+				Password:   "x",
+				FirstName:  "Alice",
+				LastName:   "Liddell",
+				IsActive:   true,
+				IsVerified: true,
+			}, nil
 		}}
 
 		userSvc := services.NewUserService(funcRepo)
@@ -50,6 +59,10 @@ func TestGetUserHandler(t *testing.T) {
 		assert.Equal(t, 1, got.ID)
 		assert.Equal(t, "alice", got.Username)
 		assert.Equal(t, "alice@example.com", got.Email)
+		assert.Equal(t, "Alice", got.FirstName)
+		assert.Equal(t, "Liddell", got.LastName)
+		assert.True(t, got.IsActive)
+		assert.True(t, got.IsVerified)
 	})
 
 	t.Run("not found", func(t *testing.T) {

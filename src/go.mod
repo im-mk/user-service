@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/gin-gonic/gin v1.11.0
-	github.com/golang-jwt/jwt/v4 v4.5.2
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
@@ -13,6 +13,8 @@ require (
 	github.com/swaggo/swag v1.16.6
 	golang.org/x/crypto v0.46.0
 )
+
+require github.com/jmoiron/sqlx v1.4.0
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
@@ -40,7 +42,6 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/goccy/go-yaml v1.19.0 // indirect
-	github.com/google/uuid v1.6.0
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect

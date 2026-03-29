@@ -1,26 +1,32 @@
-.PHONY: docs test run build start stop start-postgres start-user-service
+.PHONY: create-keys start-pgadmin start-user-db test-user-api build-user-api start-user-api start stop down
 
-docs:
-	cd src && \
-	go run github.com/swaggo/swag/cmd/swag@latest init --parseDependency --parseInternal
+create-keys:
+	mkdir -p src/.keys	
+	openssl genrsa -out src/.keys/private.pem 2048
+	openssl rsa -in src/.keys/private.pem -pubout -out src/.keys/public.pem
 
-test:
-	cd src && go test ./... 
+start-pgadmin:
+	docker compose up -d user-service-pgadmin
 
-run:
-	cd src && go run .
-	
-build:
-	cd src && go test ./... -v && docker build -t user-service .
+start-user-db:
+	docker compose up -d user-service-db user-service-liquibase
+
+test-user-api:
+	docker build -f src/Dockerfile --target test -t user-service-test ./src
+	docker run --rm user-service-test
+
+build-user-api:
+	docker compose build user-service
+
+start-user-api: create-keys test-user-api build-user-api start-user-db
+	docker compose up -d user-service
 
 start:
-	make build && docker compose up -d
+	docker compose up -d --build
 
 stop:
-	docker compose down
+	docker compose stop
 
-start-postgres:
-	docker compose up -d postgres
+down: 
+	docker compose down -v
 
-start-user-service:
-	docker compose up -d user-service
